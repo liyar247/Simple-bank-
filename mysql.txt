@@ -1,0 +1,43 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS bank_system;
+USE bank_system;
+
+-- Employees table
+CREATE TABLE employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Clients table
+CREATE TABLE clients (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    account_number VARCHAR(20) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    balance DECIMAL(15,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Transactions table
+CREATE TABLE transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    account_number VARCHAR(20) NOT NULL,
+    type ENUM('credit', 'debit') NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    description VARCHAR(255),
+    employee_id INT,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (account_number) REFERENCES clients(account_number),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+
+-- Insert a default employee (username: admin, password: admin123)
+INSERT INTO employees (username, password, full_name, email) 
+VALUES ('admin', '$2y$10$YourHashedPasswordHere', 'Admin User', 'admin@bank.com');
+
+-- Note: For the password, you'll need to hash 'admin123' using password_hash()
